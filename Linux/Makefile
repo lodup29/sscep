@@ -28,7 +28,7 @@ $(PROG)_dyn: $(OBJS)
 clean:
 	rm -f $(PROG) $(OBJS) $(MAN) core
 
-install:
+install: all
 	install ./sscep /usr/local/bin
 
 package: all
