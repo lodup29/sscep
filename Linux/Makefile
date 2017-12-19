@@ -29,7 +29,7 @@ clean:
 	rm -f $(PROG) $(OBJS) $(MAN) core
 
 install:
-	echo "TODO: install target"
+	install ./sscep /usr/local/bin
 
 package: all
 	echo "Creating package..."
