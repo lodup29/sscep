@@ -5,25 +5,25 @@
 BINDIR = /opt/CertNanny/bin
 MANDIR = /usr/local/man/man8
 
-CC	= gcc
+CC	= gcc -fPIC -march=x86-64
 #WITH_DEBUG   = -g
-OPENSSL = ../openssl
-CFLAGS	= -Wall -O $(WITH_DEBUG) -I $(OPENSSL)/include 
+CFLAGS	= -Wall -O $(WITH_DEBUG) -I /usr/include 
 
-LDFLAGS = -L$(OPENSSL)
+LDFLAGS = -Lssl
 LDLIBS = -lcrypto
 
 MAN	= sscep.8
 PROG	= sscep
 OBJS    = sscep.o init.o net.o sceputils.o pkcs7.o ias.o fileutils.o configuration.o engine.o
 
-all: $(PROG)_static $(PROG)_dyn
+all: $(PROG)_dyn
+#$(PROG)_static $(PROG)_dyn
 
 $(PROG)_static: $(OBJS)
-	$(CC) $(CFLAGS) -o $(PROG)_static $(OBJS) $(OPENSSL)/libcrypto.a -ldl
+	$(CC) $(CFLAGS) -o $(PROG)_static $(OBJS) libcrypto.a -ldl
 
 $(PROG)_dyn: $(OBJS)
-	$(CC) $(CFLAGS) -o $(PROG)_dyn $(OBJS) $(LDLIBS) $(LDFLAGS)
+	$(CC) $(CFLAGS) -o $(PROG) $(OBJS) $(LDLIBS) $(LDFLAGS)
 
 clean:
 	rm -f $(PROG) $(OBJS) $(MAN) core
