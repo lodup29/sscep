@@ -409,7 +409,7 @@ int pkcs7_verify_unwrap(struct scep *s , char * cachainfile ) {
 
 	/* Verify signature */
 	if (v_flag)
-		printf("%s: verifying signature\n", pname);
+		printf("%s: verifying signature11\n", pname);
 	si = sk_PKCS7_SIGNER_INFO_value(sk, 0);
 
 	signercert = PKCS7_cert_from_signer_info(s->reply_p7,si);
@@ -562,7 +562,7 @@ int pkcs7_unwrap(struct scep *s) {
 			pname, used);
 
 	/* Get signer */
-	sk = PKCS7_get_signer_info(s->reply_p7);
+	sk = PKCS7_get_signer_info(s->reply_p7); 
 	if (sk == NULL) {
 		fprintf(stderr, "%s: cannot get signer info!\n", pname);
 		ERR_print_errors_fp(stderr);
@@ -571,7 +571,7 @@ int pkcs7_unwrap(struct scep *s) {
 
 	/* Verify signature */
 	if (v_flag)
-		printf("%s: verifying signature\n", pname);
+		printf("%s: verifying signature22\n", pname);
 	si = sk_PKCS7_SIGNER_INFO_value(sk, 0);
 	if (PKCS7_signatureVerify(pkcs7bio, s->reply_p7, si, cacert) <= 0) {
 		fprintf(stderr, "%s: error verifying signature\n", pname);

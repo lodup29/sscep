@@ -169,6 +169,11 @@ int init_scep() {
 
 	/* Add algorithms and init random pool */
 	OpenSSL_add_all_algorithms();
+	OpenSSL_add_all_digests();
+	EVP_add_digest(EVP_md5());
+	EVP_add_digest(EVP_sha1());
+	EVP_add_digest(EVP_sha256());
+
 	ERR_load_crypto_strings();
 	RAND_seed(randpool, sizeof(randpool));
 

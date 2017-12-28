@@ -12,3 +12,7 @@
 /sscep.o
 /.git_checkout
 Makefile
+wks055-vu.crt
+local.key
+local.csr
+client.cnf
