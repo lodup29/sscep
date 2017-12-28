@@ -54,7 +54,7 @@ SERIAL_NUMBER=
 
 
 # RSA key length, minimum of 1024 recommended.
-KEYBITS=1024
+KEYBITS=2048
 
 #
 # NO NEED FOR EDITING BELOW THIS LINE
@@ -111,8 +111,12 @@ chmod 600 $PREFIX.key
 CONFIG=.$$client.cnf
 cat << _EOF_ > $CONFIG
 [ req ]
+utf8 = no
+string_mask = nombstr
 prompt = no
 distinguished_name = req_distinguished_name
+x509_extensions = tls_cert
+req_extensions  = v3_req
 _EOF_
 if [ "$PASSWORD" ]; then
 	cat << _EOF_ >> $CONFIG
@@ -121,6 +125,7 @@ attributes=req_attributes
 challengePassword=$PASSWORD
 _EOF_
 fi
+
 echo "[ req_distinguished_name ]" >> $CONFIG
 if [ "$COUNTRY" ]; then
 	echo "C=$COUNTRY" >> $CONFIG
@@ -155,11 +160,20 @@ subjectAltName=critical,IP:$PARAMETER
 subjectAltName=critical,DNS:$PARAMETER
 [x509v3_Email]
 subjectAltName=critical,email:$PARAMETER
-_EOF_
+[tls_cert]
+basicConstraints=CA:FALSE
+extendedKeyUsage = serverAuth
+[v3_req]
+extendedKeyUsage = serverAuth
+basicConstraints = CA:FALSE
+keyUsage = digitalSignature, keyEncipherment
 
+_EOF_
+DIGEST=
+#-sha256
 # Make request
-openssl req -new -key $PREFIX.key -out $PREFIX.csr -config $CONFIG \
-	-reqexts $EXT
+openssl req -new -key $PREFIX.key $DIGEST -out $PREFIX.csr -config $CONFIG \
+ -verbose
 
 # Make a self-signed certificate from request subject
 # Normally, this is done from the sscep
