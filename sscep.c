@@ -10,6 +10,30 @@
 
 #include "sscep.h"
 
+static void make_http_msg(char* http_string,
+                          const size_t http_string_size,
+                          const char* host,
+                          const char* path,
+                          const char* operation,
+                          const char* message) {
+
+	char extra_params[8192] = {};
+	if (M_flag)
+	{
+		snprintf(extra_params, sizeof(extra_params), "&%s", M_char);
+	}
+	snprintf(http_string, http_string_size,
+	 "GET %s%s?operation=%s&message=%s%s HTTP/1.0\r\n"
+	 "Host: %s\r\n"
+	 "\r\n",
+	  p_flag ? "" : "/",
+	  path,
+	  operation,
+	  message,
+	  extra_params,
+	  host);
+}
+
 static char *
 handle_serial (char * serial)
 {
@@ -531,23 +555,7 @@ main(int argc, char **argv) {
 			if (!i_flag)
 				i_char = CA_IDENTIFIER;
 
-			/* Forge the HTTP message */
-
-			if(!M_flag){
-				snprintf(http_string, sizeof(http_string),
-				 "GET %s%s?operation=GetCACert&message=%s "
-				 "HTTP/1.0\r\n\r\n", p_flag ? "" : "/", dir_name,
-						i_char);
-
-			}else{
-				snprintf(http_string, sizeof(http_string),
-					"GET %s%s?operation=GetCACert&message=%s&%s "
-					"HTTP/1.0\r\n\r\n", p_flag ? "" : "/", dir_name,
-						i_char, M_char);
-
-			}
-
-
+			make_http_msg(http_string, sizeof(http_string), host_name, dir_name, "GetCACert", i_char);
 
 			if (d_flag){
 				printf("%s: requesting CA certificate\n", pname);
@@ -631,20 +639,7 @@ main(int argc, char **argv) {
 					i_char = CA_IDENTIFIER;
 
 				/* Forge the HTTP message */
-				if(!M_flag){
-					snprintf(http_string, sizeof(http_string),
-					 "GET %s%s?operation=GetNextCACert&message=%s "
-					 "HTTP/1.0\r\n\r\n", p_flag ? "" : "/", dir_name,
-							i_char);
-
-				}else{
-					snprintf(http_string, sizeof(http_string),
-						"GET %s%s?operation=GetNextCACert&message=%s&%s "
-						"HTTP/1.0\r\n\r\n", p_flag ? "" : "/", dir_name,
-							i_char, M_char);
-
-				}
-
+				make_http_msg(http_string, sizeof(http_string), host_name, dir_name, "GetNextCACert", i_char);
 
 				if (d_flag){
 					printf("%s: requesting nextCA certificate\n", pname);
@@ -954,24 +949,7 @@ not_enroll:
 				return 0;
 			}
 
-			/* Forge the HTTP message */
-		/*	snprintf(http_string, sizeof(http_string),
-				"GET %s%s?operation="
-				"PKIOperation&message="
-				"%s HTTP/1.0\r\n\r\n",
-				p_flag ? "" : "/", dir_name, p);*/
-
-			if(!M_flag){
-				snprintf(http_string, sizeof(http_string),
-				 "GET %s%s?operation=PKIOperation&message=%s "
-				 "HTTP/1.0\r\n\r\n", p_flag ? "" : "/", dir_name, p);
-
-			}else{
-				snprintf(http_string, sizeof(http_string),
-					"GET %s%s?operation=PKIOperation&message=%s&%s "
-					"HTTP/1.0\r\n\r\n", p_flag ? "" : "/", dir_name,p, M_char);
-
-			}
+			make_http_msg(http_string, sizeof(http_string), host_name, dir_name, "PKIOperation", p);
 
 			if (d_flag)
 				fprintf(stdout, "%s: scep msg: %s",
