@@ -11,3 +11,5 @@
 /sscep_dyn
 /sscep.o
 /.git_checkout
+*.sublime-workspace
+/Makefile
