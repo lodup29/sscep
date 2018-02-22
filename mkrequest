@@ -111,6 +111,8 @@ chmod 600 $PREFIX.key
 CONFIG=.$$client.cnf
 cat << _EOF_ > $CONFIG
 [ req ]
+utf8 = no
+string_mask = nombstr
 prompt = no
 distinguished_name = req_distinguished_name
 _EOF_
