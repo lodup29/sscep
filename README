@@ -73,9 +73,12 @@ z/OS (USS environment)
 Solaris
 Windows, compiled with VC6, statically linked with OpenSSL 0.9.7i
 
+Install OpenSSL development package
+(e.g. for Ubuntu/Debian: sudo apt install -y libssl-dev)
+
 Unix:
 
-To compile run: 
+To compile run:
 $ make
 
 Windows:
@@ -83,14 +86,14 @@ Windows:
 The Win32 version of sscep has been tested with OpenSSL-v0.9.7i.
 For Win32 environment you can choose two ways to compile the sscep program.
 
-1. Dynamically linked against the binary OpenSSL distribution: 
+1. Dynamically linked against the binary OpenSSL distribution:
 	http://www.slproweb.com/download/Win32OpenSSL-v0.9.7i.exe
 For this you need the binaries from OpenSSL-v0.9.7i and change the paths
 in the makefile Makefile.w32.
 This works with VC6.0 but not with VC7.0.
 
 2. Statically linked against OpenSSL-v0.9.7i.
-You can download the source from the OpenSSL Homepage and you have to change the 
+You can download the source from the OpenSSL Homepage and you have to change the
 paths in the makefile Makefile.w32. This OpenSSL Version needs to be compiled with the same
 compiler as sscep, because otherwise you can get some trouble with diffrent LIBs.
 
@@ -99,7 +102,7 @@ of OpenSSL.
 
 To compile run:
 C:\...> vcvars32.bat
-C:\...> nmake -f Makefile.w32 
+C:\...> nmake -f Makefile.w32
 
 Copy binary file sscep and configuration file sscep.conf to somewhere.
 
@@ -203,7 +206,7 @@ CertReqFile	Certificate request file created with mkrequest.
 		Example: ./local.csr
 		Command line option: -r
 
-Debug           Debug? Answer "yes" or "no". 
+Debug           Debug? Answer "yes" or "no".
 		Command line option: -d
 
 EncAlgorithm	PKCS#7 encryption algorithm. Available algorithms are des,
@@ -225,7 +228,7 @@ SignCertFile    Instead of creating a self-signed certificate from the
 		private key for an existing certificate re-enrolls for
 		a renewal certificate, allowing for automatic approval
 		of the request. Requires specification of the corresponding
-		signature private key file (-K, SignKeyFile). 
+		signature private key file (-K, SignKeyFile).
 		Example: ./sig.crt
 		Command line option: -O
 
@@ -377,7 +380,7 @@ line option (-e) or with conf file keyword EncCertFile. Probably it is the
 certificate with key usage "Key Encipherment".
 
 Currently, SSCEP doesn't verify the CA/RA certificate chain. You can
-do it manually with OpenSSL: 
+do it manually with OpenSSL:
 
 $ openssl verify -CAfile ca.crt-1 ca.crt-0
 ca.crt-0: OK
@@ -392,11 +395,11 @@ STEP 4 - Make enrollment
 
 You need to supply configuration file keys URL, CACertFile, PrivateKeyFile,
 LocalCertFile and CertReqFile. PrivateKeyFile is the key generated in step 2
-(local.key), CertReqFile is the request (local.csr) and LocalCertFile is 
+(local.key), CertReqFile is the request (local.csr) and LocalCertFile is
 where the enrolled certificate will be written once ready.
 
 If your CA/RA have different certificates for encryption and signing, you
-must also provide the encryption certificate (EncCertFile). 
+must also provide the encryption certificate (EncCertFile).
 
 Normally, the enrollment looks like this:
 
