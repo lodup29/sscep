@@ -47,7 +47,6 @@ int new_transaction(struct scep *s) {
  * Set also subjectAltName extension if found from request.
  */
 int new_selfsigned(struct scep *s) {
-	unsigned char		 *ptr;
 	X509			 *cert;
 	X509_NAME		 *subject;
 	ASN1_INTEGER		 *serial;
@@ -98,13 +97,13 @@ int new_selfsigned(struct scep *s) {
 		exit (SCEP_PKISTATUS_SS);
 	}
 	/* Get serial no from transaction id */
-	ptr = (unsigned char *)s->transaction_id;
+	const unsigned char* ptr = (const unsigned char *)s->transaction_id;
 	if (!(serial = c2i_ASN1_INTEGER(NULL, &ptr, 32))) {
 		fprintf(stderr, "%s: error converting serial\n", pname);
 		ERR_print_errors_fp(stderr);
 		exit (SCEP_PKISTATUS_SS);
 	}
-	if (X509_set_serialNumber(cert, serial) != 1) { 
+	if (X509_set_serialNumber(cert, serial) != 1) {
 		fprintf(stderr, "%s: error setting serial\n", pname);
 		ERR_print_errors_fp(stderr);
 		exit (SCEP_PKISTATUS_SS);
@@ -223,15 +222,14 @@ err:
  */
 char *
 key_fingerprint(X509_REQ *req) {
-	char		*ret, *str;
 	unsigned char	*data, md[MD5_DIGEST_LENGTH];
 	int		c, len;
 	BIO		*bio;
 	MD5_CTX		ctx;
-	
+
 	/* Assign space for ASCII presentation of the digest */
-	str = (unsigned char *)malloc(2 * MD5_DIGEST_LENGTH + 1);
-	ret = str;
+	char* str = (char *)malloc(2 * MD5_DIGEST_LENGTH + 1);
+	char* ret = str;
 
 	/* Create new memory bio for reading the public key */
 	bio = BIO_new(BIO_s_mem());

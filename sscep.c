@@ -76,10 +76,9 @@ main(int argc, char **argv) {
 	BIO			*bp;
 	STACK_OF(X509)		*nextcara = NULL;
 	X509 				*cert=NULL;
-	PKCS7 p7;
 	int i;
 	int required_option_space;
-	
+
 
 
 #ifdef WIN32
@@ -88,9 +87,9 @@ main(int argc, char **argv) {
 	int err;
 	//printf("Starting sscep\n");
 	//fprintf(stdout, "%s: starting sscep on WIN32, sscep version %s\n",	pname, VERSION);
-       
+
 	wVersionRequested = MAKEWORD( 2, 2 );
- 
+
 	err = WSAStartup( wVersionRequested, &wsaData );
 	if ( err != 0 )
 	{
@@ -98,20 +97,20 @@ main(int argc, char **argv) {
 	  /* WinSock DLL.                                  */
 	  return;
 	}
- 
+
 	/* Confirm that the WinSock DLL supports 2.2.*/
 	/* Note that if the DLL supports versions greater    */
 	/* than 2.2 in addition to 2.2, it will still return */
 	/* 2.2 in wVersion since that is the version we      */
 	/* requested.                                        */
- 
+
 	if ( LOBYTE( wsaData.wVersion ) != 2 ||
 	        HIBYTE( wsaData.wVersion ) != 2 )
 	{
 	    /* Tell the user that we could not find a usable */
 	    /* WinSock DLL.                                  */
 	    WSACleanup( );
-	    return; 
+	    return;
 	}
 
 #endif
@@ -288,7 +287,7 @@ main(int argc, char **argv) {
 	/* If we debug, include verbose messages also */
 	if (d_flag)
 		v_flag = 1;
-	
+
 	if(f_char){
 		scep_conf_init(f_char);
 	}else{
@@ -323,7 +322,7 @@ main(int argc, char **argv) {
 	if (g_flag) {
 		scep_t.e = scep_engine_init(scep_t.e);
 	}
-	
+
 	/*
 	 * Check argument logic.
 	 */
@@ -685,7 +684,7 @@ main(int argc, char **argv) {
 					/* Set the whole struct as 0 */
 					memset(&scep_t, 0, sizeof(scep_t));
 
-					scep_t.reply_payload = reply.payload;
+					scep_t.reply_payload = (unsigned char*)reply.payload;
 					scep_t.reply_len = reply.bytes;
 					scep_t.request_type = SCEP_MIME_GETNEXTCA;
 
@@ -696,7 +695,6 @@ main(int argc, char **argv) {
 
 
 				/* Get certs */
-				p7 = *(scep_t.reply_p7);
 				nextcara = scep_t.reply_p7->d.sign->cert;
 
 			    if (v_flag) {
@@ -771,7 +769,7 @@ main(int argc, char **argv) {
 			  fprintf(stderr, "%s: missing private key (-k)\n", pname);
 			  exit (SCEP_PKISTATUS_FILE);
 			}
-			
+
 			if(scep_conf != NULL) {
 				sscep_engine_read_key_new(&rsa, k_char, scep_t.e);
 			} else {
@@ -799,16 +797,16 @@ main(int argc, char **argv) {
 
 			if (operation_flag == SCEP_OPERATION_ENROLL) {
 				read_request();
-				scep_t.transaction_id = key_fingerprint(request);			
+				scep_t.transaction_id = key_fingerprint(request);
 				if (v_flag) {
 					printf("%s:  Read request with transaction id: %s\n", pname, scep_t.transaction_id);
 				}
 			}
 
-			
+
 			if (operation_flag != SCEP_OPERATION_ENROLL)
 				goto not_enroll;
-			
+
 			if (! O_flag) {
 				if (v_flag)
 					fprintf(stdout, "%s: generating selfsigned "

@@ -31,12 +31,11 @@ int pkcs7_wrap(struct scep *s) {
 	STACK_OF(X509_ATTRIBUTE) *attributes;
 	X509			*signercert = NULL;
 	EVP_PKEY		*signerkey = NULL;
-	X509_REQ *reqcsr = NULL;
 
-	/* Create a new sender nonce for all messages 
+	/* Create a new sender nonce for all messages
 	 * XXXXXXXXXXXXXX should it be per transaction? */
 	s->sender_nonce_len = 16;
-	s->sender_nonce = malloc(s->sender_nonce_len); 
+	s->sender_nonce = malloc(s->sender_nonce_len);
 	RAND_bytes(s->sender_nonce, s->sender_nonce_len);
 
 	/* Prepare data payload */
@@ -182,7 +181,7 @@ int pkcs7_wrap(struct scep *s) {
 
 	/* Create BIO for encryption  */
 	if (d_flag){
-		printf("\n %s: hexdump request payload \n", pname , i);
+		printf("\n %s: hexdump request payload \n", pname);
 		for(i=0; i < s->request_len; i++ ){
 			printf("%02x", s->request_payload[i]);
 		}
@@ -256,10 +255,10 @@ int pkcs7_wrap(struct scep *s) {
 	/* Set signed attributes */
 	if (v_flag)
 		printf("%s: adding signed attributes\n", pname);
-	attributes = sk_X509_ATTRIBUTE_new_null();	
+	attributes = sk_X509_ATTRIBUTE_new_null();
 	add_attribute_string(attributes, nid_transId, s->transaction_id);
 	add_attribute_string(attributes, nid_messageType, s->request_type_str);
-	add_attribute_octet(attributes, nid_senderNonce, s->sender_nonce,
+	add_attribute_octet(attributes, nid_senderNonce, (char*)s->sender_nonce,
 			s->sender_nonce_len);
 	PKCS7_set_signed_attributes(si, attributes);
 	/* Add contentType */
@@ -333,15 +332,10 @@ int pkcs7_verify_unwrap(struct scep *s , char * cachainfile ) {
 	BIO				*memorybio;
 	BIO				*outbio;
 	BIO				*pkcs7bio;
-	int				i, len, bytes, used;
+	int				len, bytes, used;
 	STACK_OF(PKCS7_SIGNER_INFO)	*sk;
-	PKCS7				*p7;
 	PKCS7_SIGNER_INFO		*si;
-	STACK_OF(X509_ATTRIBUTE)	*attribs;
-	char				*p;
 	unsigned char			buffer[1024];
-	X509				*recipientcert;
-	EVP_PKEY			*recipientkey;
     X509   				*signercert;
     FILE 				*fp;
 
@@ -625,7 +619,7 @@ int pkcs7_unwrap(struct scep *s) {
 		/* XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 		exit (SCEP_PKISTATUS_P7); */
 	}
-	s->reply_sender_nonce = p;
+	s->reply_sender_nonce = (unsigned char*)p;
 	if (v_flag) {
 		printf("%s: senderNonce in reply: ", pname);
 		for (i = 0; i < 16; i++) {
@@ -638,7 +632,7 @@ int pkcs7_unwrap(struct scep *s) {
 		fprintf(stderr, "%s: cannot find recipientNonce\n", pname);
 		exit (SCEP_PKISTATUS_P7);
 	}
-	s->reply_recipient_nonce = p;
+	s->reply_recipient_nonce = (unsigned char*)p;
 	if (v_flag) {
 		printf("%s: recipientNonce in reply: ", pname);
 		for (i = 0; i < 16; i++) {
@@ -647,7 +641,7 @@ int pkcs7_unwrap(struct scep *s) {
 		printf("\n");
 	}
 	/*
-	 * Compare recipient nonce to original sender nonce 
+	 * Compare recipient nonce to original sender nonce
 	 * The draft says nothing about this, but it makes sense to me..
 	 * XXXXXXXXXXXXXX check
 	 */
@@ -714,7 +708,7 @@ int pkcs7_unwrap(struct scep *s) {
 				printf("%s: reason: %s\n", pname,
 					SCEP_FAILINFO_BADTIME_STR);
 				break;
-			case SCEP_FAILINFO_BADCERTID:		
+			case SCEP_FAILINFO_BADCERTID:
 				s->fail_info = SCEP_FAILINFO_BADCERTID;
 				printf("%s: reason: %s\n", pname,
 					SCEP_FAILINFO_BADCERTID_STR);
@@ -777,7 +771,7 @@ int pkcs7_unwrap(struct scep *s) {
 	if (v_flag)
 		printf("%s: PKCS#7 payload size: %d bytes\n", pname,
 			s->reply_len);
-	BIO_set_flags(outbio, BIO_FLAGS_MEM_RDONLY); 
+	BIO_set_flags(outbio, BIO_FLAGS_MEM_RDONLY);
 	s->reply_p7 = d2i_PKCS7_bio(outbio, NULL);
 
 	return (0);
@@ -833,7 +827,7 @@ int add_attribute_octet(STACK_OF(X509_ATTRIBUTE) *attrs, int nid, char *buffer,
 
 /* Find signed attributes */
 int get_signed_attribute(STACK_OF(X509_ATTRIBUTE) *attribs, int nid,int type, char **buffer){
-	int		rc; 
+	int		rc;
 	ASN1_TYPE	*asn1_type;
 	unsigned int	len;
 
@@ -841,11 +835,11 @@ int get_signed_attribute(STACK_OF(X509_ATTRIBUTE) *attribs, int nid,int type, ch
 	rc = get_attribute(attribs, nid, &asn1_type);
 	if (rc == 1) {
 		if (v_flag)
-			fprintf(stderr, "%s: error finding attribute\n",pname);	
+			fprintf(stderr, "%s: error finding attribute\n",pname);
 		return (1);
 	}
 	if (ASN1_TYPE_get(asn1_type) != type) {
-		fprintf(stderr, "%s: wrong ASN.1 type\n",pname);	
+		fprintf(stderr, "%s: wrong ASN.1 type\n",pname);
 		exit (SCEP_PKISTATUS_P7);
 	}
 
@@ -862,7 +856,7 @@ int get_signed_attribute(STACK_OF(X509_ATTRIBUTE) *attribs, int nid,int type, ch
 	}
 	if (*buffer == NULL) {
 		fprintf(stderr, "%s: cannot malloc space for attribute\n",
-			pname);	
+			pname);
 		exit (SCEP_PKISTATUS_P7);
 	}
 	memcpy(*buffer, ASN1_STRING_data(asn1_type->value.asn1_string), len);
@@ -874,7 +868,7 @@ int get_signed_attribute(STACK_OF(X509_ATTRIBUTE) *attribs, int nid,int type, ch
 	}
 
 	return (0);
-} 
+}
 
 int get_attribute(STACK_OF(X509_ATTRIBUTE) *attribs, int required_nid,
 				ASN1_TYPE **asn1_type) {
@@ -912,4 +906,4 @@ int get_attribute(STACK_OF(X509_ATTRIBUTE) *attribs, int required_nid,
 	if (*asn1_type == NULL)
 		return (1);
 	return (0);
-} 
+}
