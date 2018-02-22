@@ -65,7 +65,7 @@
 #include <openssl/ssl.h>
 /* Global defines */
 
-#define	VERSION	"0.6.1"
+#define	VERSION	"0.6.2"
 
 /* SCEP operations */
 int operation_flag;
@@ -134,7 +134,7 @@ int operation_flag;
 	"Integrity check failed"
 #define SCEP_FAILINFO_BADREQ		2
 #define SCEP_FAILINFO_BADREQ_STR	\
-	"Transaction not permitted or supported" 
+	"Transaction not permitted or supported"
 #define SCEP_FAILINFO_BADTIME		3
 #define SCEP_FAILINFO_BADTIME_STR	\
 	"Message time field was not sufficiently close to the system time"
@@ -255,7 +255,7 @@ struct scep {
 
 	/* Reply */
 	PKCS7 *reply_p7;
-	unsigned char *reply_payload;	
+	unsigned char *reply_payload;
 	int reply_len;
 
 	/* Engine */
