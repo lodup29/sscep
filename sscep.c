@@ -714,7 +714,7 @@ main(int argc, char **argv) {
 			    		}
 
 			    		/* Create name */
-			    		snprintf(name, 1024, "%s-%d", c_char, i);
+			    		snprintf(name, 1024, "%s-%d.crt", c_char, i);
 
 
 			    		/* Write PEM-formatted file: */

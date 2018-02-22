@@ -112,7 +112,7 @@ write_local_cert(struct scep *s) {
 		char buffer[1024];
 		cert = sk_X509_value(certs, i);
 		if (v_flag) {
-			printf("%s: found certificate with\n"
+			printf("%s: found local certificate with\n"
 				"  subject: '%s'\n", pname,
 				X509_NAME_oneline(X509_get_subject_name(cert),
 					buffer, sizeof(buffer)));
@@ -158,7 +158,7 @@ write_local_cert(struct scep *s) {
 		exit (SCEP_PKISTATUS_FILE);
 	}
 	if (v_flag)
-		printf("%s: certificate written as %s\n", pname, l_char);
+		printf("%s: local certificate written as %s\n", pname, l_char);
 	if (d_flag)
 		PEM_write_X509(stdout, localcert);
 	if (PEM_write_X509(fp, localcert) != 1) {
@@ -191,7 +191,7 @@ write_other_cert(struct scep *s) {
 
 		cert = sk_X509_value(certs, i);
 		if (v_flag) {
-			printf("%s: found certificate with\n"
+			printf("%s: found p7 certificate with\n"
 				"  subject: %s\n", pname,
 				X509_NAME_oneline(X509_get_subject_name(cert),
 					buffer, sizeof(buffer)));
@@ -223,7 +223,7 @@ write_other_cert(struct scep *s) {
 		exit (SCEP_PKISTATUS_FILE);
 	}
 	if (v_flag)
-		printf("%s: certificate written as %s\n", pname, w_char);
+		printf("%s: p7 certificate written as %s\n", pname, w_char);
 	if (d_flag)
 		PEM_write_X509(stdout, othercert);
 	if (PEM_write_X509(fp, othercert) != 1) {
@@ -288,11 +288,11 @@ write_ca_ra(struct http_reply *s) {
 		cert = sk_X509_value(certs, i);
 
 		/* Create name */
-		snprintf(name, 1024, "%s-%d", c_char, i);
+		snprintf(name, 1024, "%s-%d.crt", c_char, i);
 
 		/* Read and print certificate information */
 		if (v_flag){
-		printf("\n%s: found certificate with\n  subject: %s\n", pname,
+		printf("\n%s: found CA/RA certificate with\n  subject: %s\n", pname,
 		X509_NAME_oneline(X509_get_subject_name(cert),
 					buffer, sizeof(buffer)));
 		}
@@ -338,11 +338,11 @@ write_ca_ra(struct http_reply *s) {
 			exit (SCEP_PKISTATUS_FILE);
 		}
 		if (v_flag)
-			printf("%s: certificate written as %s\n", pname, name);
+			printf("%s: CA/RA certificate written as %s\n", pname, name);
 		if (d_flag)
 			PEM_write_X509(stdout, cert);
 		if (PEM_write_X509(fp, cert) != 1) {
-			fprintf(stderr, "%s: error while writing certificate "
+			fprintf(stderr, "%s: error while writing CA/RA certificate "
 				"file\n", pname);
 			ERR_print_errors_fp(stderr);
 			exit (SCEP_PKISTATUS_FILE);
