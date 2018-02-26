@@ -2,7 +2,7 @@
 SSCEP Release history
 ========================================
 
-Version 0.6.2 (Release 20180222)
+Version 0.6.2 (Release 20180226)
 * Fork the upstream to https://github.com/kindkaktus/sscep
 * Make it work against AD with virtual hosts
 * Fix "Transaction not permitted or supported" error

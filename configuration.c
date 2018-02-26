@@ -319,7 +319,7 @@ int scep_conf_load(CONF *conf) {
 	}
 
 
-	return 0;
+	return ret;
 }
 
 int scep_conf_load_operation_getca(CONF *conf) {
