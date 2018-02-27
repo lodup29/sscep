@@ -2,11 +2,12 @@
 SSCEP Release history
 ========================================
 
-Version 0.6.2 (Release 20180226)
+Version 0.6.2 (Release 20180227)
 * Fork the upstream to https://github.com/kindkaktus/sscep
 * Make it work against AD with virtual hosts
 * Fix "Transaction not permitted or supported" error
 * Fix a number of compiler warnings
+* Cleanup: remove support for AIX and Solaris
 
 Release 20081211
 * Patch from Leo Koutikas: set signerkey correctly in pkcs7.c
