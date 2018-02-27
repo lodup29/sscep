@@ -17,8 +17,8 @@ $(PROG): $(OBJS)
 clean:
 	rm -f $(PROG) $(OBJS) core
 
-install:
-	echo "TODO: install target"
+install: $(PROG)
+	cp $(PROG) $(INSTALL_DIR)/
 
 package: all
 	echo "Creating package..."
