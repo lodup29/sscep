@@ -14,6 +14,20 @@
 #include "sscep.h"
 #include "ias.h"
 
+typedef int (*i2d_X509Func)(void *, unsigned char **);
+
+int i2d_pkcs7_issuer_and_subject_bio(BIO* bp, pkcs7_issuer_and_subject * ias) {
+	return ASN1_i2d_bio((i2d_X509Func)i2d_pkcs7_issuer_and_subject,
+		                 bp,
+		                 (unsigned char*)ias);
+}
+
+int i2d_PKCS7_ISSUER_AND_SERIAL_bio(BIO* bp, PKCS7_ISSUER_AND_SERIAL * ias) {
+	return ASN1_i2d_bio((i2d_X509Func)i2d_PKCS7_ISSUER_AND_SERIAL,
+		                bp,
+		                (unsigned char *)ias);
+}
+
 int i2d_pkcs7_issuer_and_subject(pkcs7_issuer_and_subject *a,
 	     unsigned char **pp) {
 

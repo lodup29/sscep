@@ -5,12 +5,9 @@
  * See the file COPYRIGHT for licensing information.
  */
 
-/* Macros */
 
-#define i2d_pkcs7_issuer_and_subject_bio(bp, ias) \
-	ASN1_i2d_bio(i2d_pkcs7_issuer_and_subject, bp, (unsigned char *)ias)
-#define i2d_PKCS7_ISSUER_AND_SERIAL_bio(bp, ias)  \
-	ASN1_i2d_bio(i2d_PKCS7_ISSUER_AND_SERIAL, bp, (unsigned char *)ias)
+int i2d_pkcs7_issuer_and_subject_bio(BIO* bp, pkcs7_issuer_and_subject * ias);
+int i2d_PKCS7_ISSUER_AND_SERIAL_bio(BIO* bp, PKCS7_ISSUER_AND_SERIAL * ias);
 
 /* Routines */
 int i2d_pkcs7_issuer_and_subject(pkcs7_issuer_and_subject *, unsigned char **);
